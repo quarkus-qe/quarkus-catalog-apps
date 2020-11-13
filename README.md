@@ -86,6 +86,45 @@ And it should return:
 {"id":1,"repoUrl":"http://github.com/user/repo"}
 ```
 
+### Images
+
+- Build:
+
+```
+mvn clean package -Dquarkus.container-image.build=true
+```
+
+- Push Images to your registry:
+
+```
+docker login [your_registry]
+
+docker tag quarkus-qe/quarkus-apps-catalog-storage-service:[current_version] [your_registry]/[your_namespace]/quarkus-apps-catalog-storage-service:[current_version]
+docker push [your_registry]/[your_namespace]/quarkus-apps-catalog-storage-service:[current_version]
+
+docker tag quarkus-qe/quarkus-apps-catalog-enricher:[current_version] [your_registry]/[your_namespace]/quarkus-apps-catalog-enricher:[current_version]
+docker push [your_registry]/[your_namespace]/quarkus-apps-catalog-enricher:[current_version]
+
+docker tag quarkus-qe/quarkus-apps-catalog-rest-api:[current_version] [your_registry]/[your_namespace]/quarkus-apps-catalog-rest-api:[current_version]
+docker push [your_registry]/[your_namespace]/quarkus-apps-catalog-rest-api:[current_version]
+```
+
+- Environment Properties for REST API and Storage Service:
+
+```
+QUARKUS_DATASOURCE_USERNAME=XXX
+QUARKUS_DATASOURCE_PASSWORD=YYY
+QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://XXX:YYY/quarkusappcatalog
+QUARKUS_HIBERNATE-ORM_DATABASE_DEFAULT-SCHEMA=quarkusappcatalog
+KAFKA_BOOTSTRAP_SERVERS=...
+```
+
+- Environment Properties for Enricher Service:
+
+```
+KAFKA_BOOTSTRAP_SERVERS=...
+```
+
 ## Useful Links
 
 - [Board](https://trello.com/c/RcosHgqo)
