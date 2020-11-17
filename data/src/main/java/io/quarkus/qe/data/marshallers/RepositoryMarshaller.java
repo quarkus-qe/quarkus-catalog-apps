@@ -12,6 +12,7 @@ public class RepositoryMarshaller {
         Repository model = new Repository();
         model.setId(entity.id);
         model.setRepoUrl(entity.repoUrl);
+        model.setName(entity.name);
         return model;
     }
 

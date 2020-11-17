@@ -28,7 +28,7 @@ import io.smallrye.reactive.messaging.connectors.InMemorySource;
 public class UpdateRepositoryRequestConsumerTest {
 
     private static final String REPO_URL = "http://github.com/user/repo.git";
-    private static final String NEW_UPDATE = "The Update";
+    private static final String NEW_NAME = "The New Repo Name";
 
     @Inject
     @Any
@@ -53,14 +53,14 @@ public class UpdateRepositoryRequestConsumerTest {
 
     @Test
     public void shouldUpdateRepository() {
-        givenRepositoryWith(NEW_UPDATE);
+        givenRepositoryWith(NEW_NAME);
         whenSendUpdate();
         thenUpdateIsStored();
     }
 
-    private void givenRepositoryWith(String someUpdate) {
+    private void givenRepositoryWith(String name) {
         repository = repositoryMarshaller.fromEntity(entity);
-        repository.setSomeUpdate(someUpdate);
+        repository.setName(name);
     }
 
     private void whenSendUpdate() {
@@ -69,7 +69,7 @@ public class UpdateRepositoryRequestConsumerTest {
 
     private void thenUpdateIsStored() {
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(
-                () -> assertEquals(NEW_UPDATE, repositoryEntityUtils.findById(repository.getId()).someUpdate));
+                () -> assertEquals(NEW_NAME, repositoryEntityUtils.findById(repository.getId()).name));
     }
 
 }

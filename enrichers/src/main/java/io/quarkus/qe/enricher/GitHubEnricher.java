@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class GitHubEnricher {
+public class GitHubEnricher implements Enricher {
     @ConfigProperty(name = "enricher.github.baseUrl")
     String baseUrl;
 
@@ -19,11 +19,11 @@ public class GitHubEnricher {
     @RestClient
     RepositoryClient repositoryClient;
 
-    public Repository enrichRepository(Repository repository) {
-        final String repoUrl = repository.getRepoUrl();
-        final String repositoryPath = StringUtils.removeStart(repoUrl, baseUrl);
-        final RepositoryInfo repositoryInfo = repositoryClient.getRepositoryInfo(repositoryPath);
-        repository.setSomeUpdate(repositoryInfo.name);
-        return repository;
+    @Override
+    public void enrichRepository(Repository repository) {
+        String repoUrl = repository.getRepoUrl();
+        String repositoryPath = StringUtils.removeStart(repoUrl, baseUrl);
+        RepositoryInfo repositoryInfo = repositoryClient.getRepositoryInfo(repositoryPath);
+        repository.setName(repositoryInfo.name);
     }
 }

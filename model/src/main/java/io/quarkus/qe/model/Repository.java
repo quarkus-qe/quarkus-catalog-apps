@@ -6,7 +6,7 @@ public class Repository {
     private Long id;
     @NotEmpty
     private String repoUrl;
-    private String someUpdate;
+    private String name;
 
     public Long getId() {
         return id;
@@ -24,11 +24,11 @@ public class Repository {
         this.repoUrl = repoUrl;
     }
 
-    public String getSomeUpdate() {
-        return someUpdate;
+    public String getName() {
+        return name;
     }
 
-    public void setSomeUpdate(String someUpdate) {
-        this.someUpdate = someUpdate;
+    public void setName(String name) {
+        this.name = name;
     }
 }

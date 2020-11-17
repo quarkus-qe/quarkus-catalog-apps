@@ -23,7 +23,7 @@ public class UpdateRepositoryRequestConsumer {
         LOG.info("Update repository " + repository.getRepoUrl());
 
         RepositoryEntity entity = RepositoryEntity.findById(repository.getId());
-        entity.someUpdate = repository.getSomeUpdate();
+        entity.name = repository.getName();
         entity.persist();
     }
 }

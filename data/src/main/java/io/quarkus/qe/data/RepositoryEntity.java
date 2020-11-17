@@ -8,5 +8,5 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 public class RepositoryEntity extends PanacheEntity {
     @Column(unique = true, nullable = false)
     public String repoUrl;
-    public String someUpdate;
+    public String name;
 }
