@@ -1,0 +1,37 @@
+name: "Daily Build"
+on:
+  schedule:
+    - cron: '0 23 * * *'
+jobs:
+  build-jvm:
+    name: Daily build - JVM
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 11 ]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Install JDK {{ matrix.java }}
+        uses: joschi/setup-jdk@b9cc6eabf7e7e3889766b5cee486f874c9e1bd2d
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Build Quarkus master
+        run: |
+          git clone https://github.com/quarkusio/quarkus.git && cd quarkus && mvn -B clean install -Dquickly
+      - name: Test in JVM mode
+        run: |
+          mvn -V -B -fae clean verify
+      - name: Zip Artifacts
+        run: |
+          zip -R artifacts-jvm${{ matrix.java }}.zip '*-reports/*'
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ci-artifacts
+          path: artifacts-jvm${{ matrix.java }}.zip
