@@ -12,6 +12,9 @@ import io.quarkus.qe.exceptions.RepositoryNotFoundException;
 import io.quarkus.qe.model.Repository;
 import io.quarkus.qe.model.requests.NewRepositoryRequest;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @ApplicationScoped
 public class RepositoryService {
 
@@ -29,6 +32,14 @@ public class RepositoryService {
         }
 
         return repositoryMarshaller.fromEntity(entity);
+    }
+
+    public List<Repository> findAll(final int pageIndex, final int size) {
+        return RepositoryEntity.<RepositoryEntity> findAll()
+                .page(pageIndex, size)
+                .stream()
+                .map(repositoryMarshaller::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public void sendNewRepositoryRequest(Repository request) throws RepositoryAlreadyExistsException {
