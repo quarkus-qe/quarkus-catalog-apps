@@ -57,7 +57,6 @@ public class RepositoryResource {
         } catch (RepositoryAlreadyExistsException e) {
             return Response.status(Status.CONFLICT).build();
         }
-
     }
 
 }

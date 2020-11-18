@@ -91,7 +91,7 @@ And it should return:
 - Build:
 
 ```
-mvn clean package -Dquarkus.container-image.build=true
+mvn clean package
 ```
 
 - Push Images to your registry:
