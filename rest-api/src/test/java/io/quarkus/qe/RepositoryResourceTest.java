@@ -38,6 +38,7 @@ public class RepositoryResourceTest {
     private static final long AN_ENTITY_ID = 100;
     private static final int EXPECTED_ALL_REPOS_AMOUNT = 3;
     private static final String PATH = "/repository";
+    private static final String BRANCH = "master";
     private static final String REPO_URL = "http://github.com/user/repo.git";
     private static final String REPO_URL_1 = "http://github.com/user/repo1.git";
     private static final String REPO_URL_2 = "http://github.com/user/repo2.git";
@@ -51,7 +52,7 @@ public class RepositoryResourceTest {
     @Inject
     RepositoryEntityUtils repositoryEntityUtils;
 
-    private Repository repository;
+    private NewRepositoryRequest repository;
     private RepositoryEntity entity;
     private Response response;
     private InMemorySink<NewRepositoryRequest> responses;
@@ -113,12 +114,13 @@ public class RepositoryResourceTest {
     }
 
     private void givenExistingRepository(String repoUrl) {
-        entity = repositoryEntityUtils.create(repoUrl);
+        entity = repositoryEntityUtils.create(repoUrl, BRANCH);
     }
 
     private void givenNewRepositoryRequest(String repoUrl) {
-        repository = new Repository();
+        repository = new NewRepositoryRequest();
         repository.setRepoUrl(repoUrl);
+        repository.setBranch(BRANCH);
     }
 
     private void whenAddNewRepository() {

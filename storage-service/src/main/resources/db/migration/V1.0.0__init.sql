@@ -4,5 +4,6 @@ CREATE TABLE repository
 (
   id            BIGINT PRIMARY KEY,
   repourl       VARCHAR(100) NOT NULL UNIQUE,
-  name          VARCHAR(20)
+  name          VARCHAR(100),
+  branch        VARCHAR(50)
 );

@@ -35,6 +35,6 @@ public abstract class BaseServiceContainer extends GenericContainer<BaseServiceC
     }
 
     private static final String getDefaultImageValue(String name) {
-        return String.format("quarkus-qe/quarkus-apps-catalog-%s:1.0.0-SNAPSHOT", name);
+        return String.format("quarkus-qe/quarkus-apps-catalog-%s:1.0.1-SNAPSHOT", name);
     }
 }

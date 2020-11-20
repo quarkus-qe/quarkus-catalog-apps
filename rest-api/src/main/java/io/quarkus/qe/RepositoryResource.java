@@ -18,6 +18,7 @@ import io.quarkus.qe.exceptions.CatalogError;
 import io.quarkus.qe.exceptions.RepositoryAlreadyExistsException;
 import io.quarkus.qe.exceptions.RepositoryNotFoundException;
 import io.quarkus.qe.model.Repository;
+import io.quarkus.qe.model.requests.NewRepositoryRequest;
 import io.quarkus.qe.services.RepositoryService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -67,7 +68,7 @@ public class RepositoryResource {
     @Operation(summary = "Request analyze new repository")
     @APIResponse(name = "NewRepository", responseCode = "202", description = "Accepted")
     @APIResponse(responseCode = "409", description = "Already requested", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = CatalogError.class, required = true)))
-    public Response add(@Valid Repository request) throws RepositoryAlreadyExistsException {
+    public Response add(@Valid NewRepositoryRequest request) throws RepositoryAlreadyExistsException {
         repositoryService.sendNewRepositoryRequest(request);
         return Response.accepted().build();
     }

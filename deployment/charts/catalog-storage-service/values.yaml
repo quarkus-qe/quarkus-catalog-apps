@@ -5,8 +5,8 @@
 replicaCount: 1
 image:
   repository: quay.io/jcarvaja/quarkus-apps-catalog-storage-service
-  tag: 1.0.0-SNAPSHOT
-  pullPolicy: IfNotPresent
+  tag: 1.0.1-SNAPSHOT
+  pullPolicy: Always
 service:
   name: catalog-storage-service
   type: ClusterIP

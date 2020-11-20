@@ -3,12 +3,11 @@ package io.quarkus.qe.consumers;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
-import javax.persistence.LockModeType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +29,7 @@ import io.smallrye.reactive.messaging.connectors.InMemorySource;
 public class NewRepositoryRequestConsumerTest {
 
     private static final String REPO_URL = "http://github.com/user/repo.git";
+    private static final String BRANCH = "master";
 
     @Inject
     @Any
@@ -54,7 +54,9 @@ public class NewRepositoryRequestConsumerTest {
     }
 
     private void givenNewRepositoryWith(String repoUrl) {
-        repository = new NewRepositoryRequest(repoUrl);
+        repository = new NewRepositoryRequest();
+        repository.setBranch(BRANCH);
+        repository.setRepoUrl(repoUrl);
     }
 
     private void whenSendNewRequest() {
@@ -62,7 +64,10 @@ public class NewRepositoryRequestConsumerTest {
     }
 
     private void thenRepositoryIsStored() {
-        assertEquals(1, RepositoryEntity.find("repoUrl", REPO_URL).withLock(LockModeType.PESSIMISTIC_WRITE).count());
+        List<RepositoryEntity> entities = RepositoryEntity.find("repoUrl", REPO_URL).list();
+
+        assertEquals(1, entities.size());
+        assertEquals(BRANCH, entities.get(0).branch);
     }
 
     private void thenResponseIsSent() {

@@ -51,7 +51,7 @@ mvn clean install
 - Start Storage Service:
 
 ```
-java -jar storage-service/target/storage-service-1.0.0-SNAPSHOT-runner.jar
+java -jar storage-service/target/storage-service-1.0.1-SNAPSHOT-runner.jar
 ```
 
 | Note that the storage service will initialize the database if it does not exist.
@@ -59,13 +59,15 @@ java -jar storage-service/target/storage-service-1.0.0-SNAPSHOT-runner.jar
 - Start REST API:
 
 ```
-java -jar rest-api/target/rest-api-1.0.0-SNAPSHOT-runner.jar
+java -jar rest-api/target/rest-api-1.0.1-SNAPSHOT-runner.jar
 ```
+
+| The Swagger-UI will be available at [http://localhost:8081/swagger-ui](http://localhost:8081/swagger-ui)
 
 - Register a repository:
 
 ```
-curl -X POST -H "Content-type: application/json" --data '{ "repoUrl": "http://github.com/user/repo" }' "http://localhost:8081/repository"
+curl -X POST -H "Content-type: application/json" --data '{ "repoUrl": "http://github.com/user/repo", "branch": "master" }' "http://localhost:8081/repository"
 ```
 
 Now, you should see this log in the storage service:
@@ -74,15 +76,16 @@ Now, you should see this log in the storage service:
 (vert.x-worker-thread-0) New repository 'http://github.com/user/repo' with ID 1
 ```
 
-- Swagger-UI
-```
-http://localhost:8081/swagger-ui/
-```
-
 - Get the repo details
 
 ```
 curl -X GET -H "Content-type: application/json" "http://localhost:8081/repository/1"
+```
+
+- Get all repo 
+
+```
+curl -X GET -H "Content-type: application/json" "http://localhost:8081/repository"
 ```
 
 And it should return:

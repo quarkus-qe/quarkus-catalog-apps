@@ -14,9 +14,10 @@ public class RepositoryEntityUtils {
     }
 
     @Transactional
-    public RepositoryEntity create(String repoUrl) {
+    public RepositoryEntity create(String repoUrl, String branch) {
         RepositoryEntity entity = new RepositoryEntity();
         entity.repoUrl = repoUrl;
+        entity.branch = branch;
         entity.persist();
 
         return entity;

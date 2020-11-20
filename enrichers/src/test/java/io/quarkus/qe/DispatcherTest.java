@@ -2,6 +2,7 @@ package io.quarkus.qe;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +26,7 @@ import io.smallrye.reactive.messaging.connectors.InMemorySource;
 public class DispatcherTest {
 
     private static final String REPO_URL = "https://github.com/quarkus-qe/quarkus-catalog-apps";
+    private static final String BRANCH = "main";
     private static final String EXPECTED_NAME = "quarkus-catalog-apps";
 
     @Inject
@@ -52,13 +54,17 @@ public class DispatcherTest {
     private void thenRepositoryShouldBeUpdatedWithName(String expectedName) {
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
             assertEquals(1, responses.received().size());
-            assertEquals(expectedName, responses.received().get(0).getPayload().getName());
+
+            Repository actual = responses.received().get(0).getPayload();
+            assertEquals(expectedName, actual.getName());
+            assertNotNull(actual.getExtensions());
         });
     }
 
     private void givenRepositoryRequest() {
         repository = new Repository();
         repository.setRepoUrl(REPO_URL);
+        repository.setBranch(BRANCH);
     }
 
     private void whenSend() {

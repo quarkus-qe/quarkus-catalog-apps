@@ -42,11 +42,11 @@ public class RepositoryService {
                 .collect(Collectors.toList());
     }
 
-    public void sendNewRepositoryRequest(Repository request) throws RepositoryAlreadyExistsException {
+    public void sendNewRepositoryRequest(NewRepositoryRequest request) throws RepositoryAlreadyExistsException {
         if (RepositoryEntity.find("repoUrl", request.getRepoUrl()).count() > 0) {
             throw new RepositoryAlreadyExistsException(String.format("Repository %s already exist.", request.getRepoUrl()));
         }
 
-        newRepositoryRequestEmitter.send(new NewRepositoryRequest(request.getRepoUrl()));
+        newRepositoryRequestEmitter.send(request);
     }
 }

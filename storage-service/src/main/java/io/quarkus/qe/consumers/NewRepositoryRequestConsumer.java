@@ -35,6 +35,7 @@ public class NewRepositoryRequestConsumer {
         try {
             RepositoryEntity entity = new RepositoryEntity();
             entity.repoUrl = request.getRepoUrl();
+            entity.branch = request.getBranch();
             entity.persist();
             LOG.info("New repository '" + request.getRepoUrl() + "' with ID " + entity.id);
             enrichEmitter.send(repositoryMarshaller.fromEntity(entity));
