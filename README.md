@@ -133,6 +133,35 @@ KAFKA_BOOTSTRAP_SERVERS=...
 KAFKA_BOOTSTRAP_SERVERS=...
 ```
 
+## Release Lifecycle
+
+1. Start release:
+
+```
+mvn versions:set -DnewVersion=X.Y.Z-SNAPSHOT
+git add --all
+git commit -m "Started release X.Y.Z-SNAPSHOT"
+git push
+```
+
+Once the commit is merged.
+
+2. Create Milestone vX.Y.Z
+3. Create issues by tasks (see [task board](https://trello.com/c/RcosHgqo)) with correct milestone vX.Y.Z
+
+- End release:
+
+```
+mvn versions:set -DnewVersion=X.Y.Z
+git add --all
+git commit -m "End release X.Y.Z"
+git push
+```
+
+Once the commit is merged.
+
+4. Close milestone in GitHub: This will generate the release and the release notes
+
 ## Useful Links
 
 - [Board](https://trello.com/c/RcosHgqo)
