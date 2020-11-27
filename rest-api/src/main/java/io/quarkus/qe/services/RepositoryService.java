@@ -2,6 +2,7 @@ package io.quarkus.qe.services;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import io.quarkus.qe.configuration.Channels;
@@ -21,6 +22,9 @@ public class RepositoryService {
     @Inject
     @Channel(Channels.NEW_REPOSITORY)
     Emitter<NewRepositoryRequest> newRepositoryRequestEmitter;
+
+    @Channel(Channels.ENRICH_REPOSITORY)
+    Emitter<Repository> enrichEmitter;
 
     @Inject
     RepositoryMarshaller repositoryMarshaller;
@@ -46,7 +50,10 @@ public class RepositoryService {
         if (RepositoryEntity.find("repoUrl", request.getRepoUrl()).count() > 0) {
             throw new RepositoryAlreadyExistsException(String.format("Repository %s already exist.", request.getRepoUrl()));
         }
-
         newRepositoryRequestEmitter.send(request);
+    }
+
+    public void updateRepositoryRequest(long id) throws RepositoryNotFoundException {
+        enrichEmitter.send(findById(id));
     }
 }
