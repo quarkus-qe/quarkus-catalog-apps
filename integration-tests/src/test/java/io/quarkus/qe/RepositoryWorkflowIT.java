@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -19,6 +20,9 @@ public class RepositoryWorkflowIT extends BaseIT {
     private static final String PATH = "/repository";
     private static final String REPO_URL = "https://github.com/quarkus-qe/quarkus-catalog-apps";
     private static final String BRANCH = "main";
+    private static final String LABEL = "my-label";
+    private static final String COMPLETED_STATE = "COMPLETED";
+    private static final String PENDING_STATE = "PENDING";
 
     @Test
     public void shouldCreateRepositoryAndPopulateRepository() {
@@ -32,11 +36,17 @@ public class RepositoryWorkflowIT extends BaseIT {
         NewRepositoryRequest repository = new NewRepositoryRequest();
         repository.setRepoUrl(repoUrl);
         repository.setBranch(BRANCH);
+        repository.setLabels(Arrays.asList(LABEL));
         givenRestApiService().body(repository).post(PATH).then().statusCode(HttpStatus.SC_ACCEPTED);
     }
 
     private void thenRepositoryShouldBeCreatedInDatabase(String expectedRepoUrl) {
-        awaitFor(() -> assertTrue(getRepositoryByRepoUrl(expectedRepoUrl).isPresent()));
+        awaitFor(() -> {
+            Optional<Repository> actual = getRepositoryByRepoUrl(expectedRepoUrl);
+            assertTrue(actual.isPresent());
+            assertNotNull(actual.get().getCreatedAt());
+            assertEquals(PENDING_STATE, actual.get().getStatus());
+        });
     }
 
     private void thenRepositoryShouldBeUpdated(String expectedRepoUrl, String expectedName) {
@@ -45,6 +55,10 @@ public class RepositoryWorkflowIT extends BaseIT {
             assertEquals(expectedName, actual.getName());
             assertNotNull(actual.getExtensions());
             assertFalse(actual.getExtensions().isEmpty());
+            assertEquals(1, actual.getLabels().size());
+            assertEquals(LABEL, actual.getLabels().iterator().next());
+            assertNotNull(actual.getUpdatedAt());
+            assertEquals(COMPLETED_STATE, actual.getStatus());
         });
     }
 
