@@ -7,7 +7,7 @@ qe-quarkus-app:
   deployment:
     name: catalog-storage-api
     image:
-      repository: uay.io/jcarvaja/quarkus-apps-catalog-storage-service
+      repository: quay.io/quarkusqeteam/quarkus-apps-catalog-storage-service
       tag: 1.0.1-SNAPSHOT
       pullPolicy: Always
     env:
