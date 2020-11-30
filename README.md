@@ -160,7 +160,7 @@ git push
 
 Once the commit is merged.
 
-4. Close milestone in GitHub: This will generate the release and the release notes
+4. Close milestone in GitHub: This will generate the release, push the released images into the container registry and update the release notes.
 
 ## Useful Links
 
