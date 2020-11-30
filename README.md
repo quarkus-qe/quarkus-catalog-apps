@@ -94,6 +94,89 @@ And it should return:
 {"id":1,"repoUrl":"http://github.com/user/repo"}
 ```
 
+### GraphQL
+
+When running the REST API service, it also runs a GraphQL endpoint at `/graphql-ui` (in production mode).
+
+At the moment, there are four queries:
+
+- repositories:
+
+```
+{
+   repositories {
+    id
+    repoUrl
+    name
+    branch
+    extensions {
+      name
+    }
+    labels
+    createdAt
+    updatedAt
+    status
+   }
+}
+```
+
+- by repository URL:
+
+```
+{
+   repositoryByUrl (repoUrl: "http://myrepo/path") {
+    id
+    repoUrl
+    name
+    branch
+    extensions {
+      name
+    }
+    labels
+    createdAt
+    updatedAt
+    status
+   }
+}
+```
+
+- by repository ID:
+
+```
+{
+   repositoryById (id: 19) {
+    id
+    repoUrl
+    name
+    branch
+    extensions {
+      name
+    }
+    labels
+    createdAt
+    updatedAt
+    status
+   }
+}
+```
+
+- repositories that use any of a list of extensions:
+
+```
+{
+   repositoriesByExtensions (extensions: ["quarkus-json", "quarkus-rest"]) {
+    id
+    repoUrl
+    name
+    branch
+    labels
+    createdAt
+    updatedAt
+    status
+   }
+}
+```
+
 ### Images
 
 - Build:

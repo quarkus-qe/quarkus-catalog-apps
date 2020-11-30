@@ -26,7 +26,7 @@ public class QuarkusExtensionEntity extends PanacheEntity {
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return name.hashCode();
     }
 

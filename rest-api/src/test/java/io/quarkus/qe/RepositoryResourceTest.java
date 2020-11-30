@@ -2,24 +2,22 @@ package io.quarkus.qe;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
-import io.quarkus.qe.exceptions.CatalogError;
-import io.quarkus.qe.exceptions.RepositoryAlreadyExistsException;
-import io.quarkus.qe.exceptions.RepositoryNotFoundException;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.qe.configuration.Channels;
 import io.quarkus.qe.data.RepositoryEntity;
+import io.quarkus.qe.exceptions.CatalogError;
+import io.quarkus.qe.exceptions.RepositoryAlreadyExistsException;
+import io.quarkus.qe.exceptions.RepositoryNotFoundException;
 import io.quarkus.qe.model.Repository;
 import io.quarkus.qe.model.requests.NewRepositoryRequest;
 import io.quarkus.qe.utils.InMemoryKafkaResource;
@@ -191,11 +189,11 @@ public class RepositoryResourceTest {
     }
 
     private void thenResponseObjectsAmountIs(int expectedAmount) {
-        assertTrue(response.as(Repository[].class).length == expectedAmount);
+        assertEquals(expectedAmount, response.as(Repository[].class).length);
     }
 
     private void thenResponseErrorCodeIs(int expectedCode) {
-        assertTrue(response.as(CatalogError.class).getCode() == expectedCode);
+        assertEquals(expectedCode, response.as(CatalogError.class).getCode());
     }
 
     private void thenResponseErrorMessageIs(String expectedMsg) {
