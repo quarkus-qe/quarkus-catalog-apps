@@ -243,8 +243,10 @@ git push
 
 Once the commit is merged.
 
-4. Close milestone in GitHub: This will generate a draft release and will output the release notes to be copied in the release notes.
-5. Deploy release vX.Y.Z into OpenShift using [this jenkins job](https://quarkus-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/quarkus-apps-catalog-promote/)
+4. Close milestone in GitHub: This will generate a draft release with the release notes.
+5. Review Release Notes and if everything looks ok, publish the release.
+6. Wait until the new images are pushed into Quay.io. This job is triggered automatically once the release is closed.
+7. Deploy release vX.Y.Z into OpenShift using [this jenkins job](https://quarkus-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/quarkus-apps-catalog-promote/)
 
 ## Useful Links
 

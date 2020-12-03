@@ -24,8 +24,8 @@ qe-quarkus-app:
   service:
     name: catalog-storage-service
     type: ClusterIP
-    externalPort: 8083
-    internalPort: 8083
+    externalPort: 8082
+    internalPort: 8082
   database:
     url: jdbc:postgresql://dev-quarkusappcatalog.postgresql-qe-infra:5432/quarkusappcatalog
     user: root

@@ -13,14 +13,3 @@ jobs:
         uses: ecampidoglio/auto-release-milestone@v1
         with:
           repo-token: ${{ secrets.TOKEN }}
-  create-release-notes:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    # More info in: https://github.com/Decathlon/release-notes-generator-action
-    - name: Create Release Notes
-      uses: docker://decathlon/release-notes-generator-action:2.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        OUTPUT_FOLDER: temp_release_notes
-        USE_MILESTONE_TITLE: "true"

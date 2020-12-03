@@ -17,7 +17,7 @@ charts:
     namespace: dev-catalog-app
     chart: ../../charts/catalog-storage-service/
     values:
-      - ../../values/dev/catalog-rest-api/values.yaml
+      - ../../values/dev/catalog-storage-service/values.yaml
     set:
       - name: "qe-quarkus-app.deployment.image.tag"
         value: '{{ env "CATALOG_STORAGE_TAG" | default "latest" }}'

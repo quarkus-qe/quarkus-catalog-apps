@@ -12,7 +12,7 @@ oc login -u=$OC_USER -p=$OC_PWD -s=$OC_SERVER --insecure-skip-tls-verify=true
 
 # Promote
 cd /deployment/helmfiles/dev
-export CATALOG_API_TAG=$RELEASE
-export CATALOG_STORAGE_TAG=$RELEASE
-export CATALOG_ENRICHER_TAG=$RELEASE
+export CATALOG_API_TAG=${RELEASE:1}
+export CATALOG_STORAGE_TAG=${RELEASE:1}
+export CATALOG_ENRICHER_TAG=${RELEASE:1}
 helmfile -f helmfile.yaml sync
