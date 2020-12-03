@@ -2,12 +2,10 @@ package io.quarkus.qe.consumers;
 
 import java.time.LocalDateTime;
 
-import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import io.quarkus.qe.data.QuarkusVersionEntity;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.jboss.logging.Logger;
 
@@ -15,6 +13,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.qe.configuration.Channels;
 import io.quarkus.qe.data.LogEntity;
 import io.quarkus.qe.data.QuarkusExtensionEntity;
+import io.quarkus.qe.data.QuarkusVersionEntity;
 import io.quarkus.qe.data.RepositoryEntity;
 import io.quarkus.qe.data.RepositoryStatus;
 import io.quarkus.qe.data.marshallers.LogMarshaller;
@@ -22,8 +21,6 @@ import io.quarkus.qe.model.Log;
 import io.quarkus.qe.model.QuarkusExtension;
 import io.quarkus.qe.model.Repository;
 import io.smallrye.reactive.messaging.annotations.Blocking;
-
-import java.util.Optional;
 
 @ApplicationScoped
 public class UpdateRepositoryRequestConsumer {
@@ -43,9 +40,9 @@ public class UpdateRepositoryRequestConsumer {
         entity.name = repository.getName();
         entity.updatedAt = LocalDateTime.now();
         entity.status = RepositoryStatus.COMPLETED;
+        entity.quarkusVersion = lookupQuarkusVersion(repository.getQuarkusVersion());
         updateQuarkusExtensions(repository, entity);
         updateLogs(repository, entity);
-        updateRepositoryVersion(repository, entity);
         entity.persist();
     }
 
@@ -56,13 +53,7 @@ public class UpdateRepositoryRequestConsumer {
                 QuarkusExtensionEntity extensionEntity = new QuarkusExtensionEntity();
                 extensionEntity.repository = entity;
                 extensionEntity.name = extension.getName();
-                extensionEntity.version = getVersionEntity(extension.getVersion());
-                if (Objects.isNull(extensionEntity.version)) {
-                    QuarkusVersionEntity versionEntity = new QuarkusVersionEntity();
-                    versionEntity.id = extension.getVersion();
-                    versionEntity.persist();
-                    extensionEntity.version = versionEntity;
-                }
+                extensionEntity.version = lookupQuarkusVersion(extension.getVersion());
                 entity.extensions.add(extensionEntity);
             }
         }
@@ -80,19 +71,18 @@ public class UpdateRepositoryRequestConsumer {
         }
     }
 
-    private void updateRepositoryVersion(Repository repository, RepositoryEntity entity) {
-        Optional.ofNullable(repository.getQuarkusVersion()).ifPresent(version -> {
-            entity.quarkusVersion = getVersionEntity(version.getVersion());
-            if (Objects.isNull(entity.quarkusVersion)) {
-                QuarkusVersionEntity versionEntity = new QuarkusVersionEntity();
-                versionEntity.id = version.getVersion();
-                versionEntity.persist();
-                entity.quarkusVersion = versionEntity;
-            }
-        });
-    }
+    private QuarkusVersionEntity lookupQuarkusVersion(String version) {
+        if (version == null) {
+            return null;
+        }
 
-    private QuarkusVersionEntity getVersionEntity(String version) {
-        return QuarkusVersionEntity.findById(version);
+        QuarkusVersionEntity versionEntity = QuarkusVersionEntity.findById(version);
+        if (versionEntity == null) {
+            versionEntity = new QuarkusVersionEntity();
+            versionEntity.id = version;
+            versionEntity.persist();
+        }
+
+        return versionEntity;
     }
 }

@@ -34,6 +34,7 @@ public class NewRepositoryRequestConsumerTest {
 
     private static final String REPO_URL = "http://github.com/user/repo.git";
     private static final String BRANCH = "master";
+    private static final String RELATIVE_PATH = "/path";
     private static final String LABEL = "aLabel";
 
     @Inject
@@ -62,6 +63,7 @@ public class NewRepositoryRequestConsumerTest {
         repository = new NewRepositoryRequest();
         repository.setBranch(BRANCH);
         repository.setRepoUrl(repoUrl);
+        repository.setRelativePath(RELATIVE_PATH);
         repository.setLabels(Arrays.asList(LABEL));
     }
 
@@ -76,6 +78,7 @@ public class NewRepositoryRequestConsumerTest {
 
         RepositoryEntity actualEntity = entities.get(0);
         assertEquals(BRANCH, actualEntity.branch);
+        assertEquals(RELATIVE_PATH, actualEntity.relativePath);
         assertEquals(1, actualEntity.labels.size());
         assertEquals(LABEL, actualEntity.labels.iterator().next().name);
         assertEquals(RepositoryStatus.PENDING, actualEntity.status);

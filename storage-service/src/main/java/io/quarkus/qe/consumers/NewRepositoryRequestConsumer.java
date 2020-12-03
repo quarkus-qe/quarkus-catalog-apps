@@ -41,6 +41,7 @@ public class NewRepositoryRequestConsumer {
             RepositoryEntity entity = new RepositoryEntity();
             entity.repoUrl = request.getRepoUrl();
             entity.branch = request.getBranch();
+            entity.relativePath = request.getRelativePath();
             entity.createdAt = LocalDateTime.now();
             entity.status = RepositoryStatus.PENDING;
             updateLabels(request, entity);

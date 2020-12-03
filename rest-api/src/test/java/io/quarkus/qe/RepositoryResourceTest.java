@@ -75,7 +75,7 @@ public class RepositoryResourceTest {
     @Test
     public void shouldUpdateRepository() throws RepositoryNotFoundException {
         givenExistingRepository(REPO_URL);
-        whenUpdateRepository(entity.id);
+        whenUpdateRepository();
         thenResponseIsAccepted();
         thenUpdateRepositoryRequestIsSent();
     }
@@ -99,7 +99,7 @@ public class RepositoryResourceTest {
 
     @Test
     public void shouldReturnRepositoryNotFound() throws RepositoryNotFoundException {
-        whenUpdateRepository(NOT_FOUND_ENTITY_ID);
+        whenUpdateRepository();
         thenResponseIsNotFound();
         thenResponseErrorCodeIs(RepositoryNotFoundException.uniqueServiceErrorId);
         thenResponseErrorMessageIs(EXPECTED_NOT_FOUND_ERROR_MSG);
@@ -119,7 +119,7 @@ public class RepositoryResourceTest {
         givenExistingRepository(REPO_URL_2);
         whenGetAllRepositories(0, EXPECTED_ALL_REPOS_AMOUNT);
         thenResponseIsOk();
-        thenResponseObjectsAmountIs(EXPECTED_ALL_REPOS_AMOUNT);
+        thenResponseRepositoryAmountIs(EXPECTED_ALL_REPOS_AMOUNT);
     }
 
     @Test
@@ -145,9 +145,10 @@ public class RepositoryResourceTest {
                 .body(repository).when().post(PATH);
     }
 
-    private void whenUpdateRepository(Long id) throws RepositoryNotFoundException {
+    private void whenUpdateRepository() throws RepositoryNotFoundException {
+        long entityId = Optional.ofNullable(entity).map(e -> e.id).orElse(NOT_FOUND_ENTITY_ID);
         response = given().contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).and()
-                .when().put(PATH + "/" + id);
+                .when().put(PATH + "/" + entityId);
     }
 
     private void whenGetRepository() {
@@ -188,7 +189,7 @@ public class RepositoryResourceTest {
         response.then().statusCode(HttpStatus.SC_CONFLICT);
     }
 
-    private void thenResponseObjectsAmountIs(int expectedAmount) {
+    private void thenResponseRepositoryAmountIs(int expectedAmount) {
         assertEquals(expectedAmount, response.as(Repository[].class).length);
     }
 

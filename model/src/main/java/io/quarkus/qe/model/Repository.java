@@ -4,6 +4,7 @@ import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.constraints.NotEmpty;
@@ -14,12 +15,13 @@ public class Repository {
     private String repoUrl;
     @NotEmpty
     private String branch;
+    private String relativePath;
     private String createdAt;
     private String updatedAt;
     private String status;
     private String name;
     private Set<QuarkusExtension> extensions = new HashSet<>();
-    private QuarkusVersion quarkusVersion;
+    private String quarkusVersion;
     private Set<String> labels = new HashSet<>();
     private List<Log> logs = new ArrayList<>();
 
@@ -53,6 +55,14 @@ public class Repository {
 
     public void setBranch(String branch) {
         this.branch = branch;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 
     public String getCreatedAt() {
@@ -95,11 +105,11 @@ public class Repository {
         this.logs = logs;
     }
 
-    public QuarkusVersion getQuarkusVersion() {
+    public String getQuarkusVersion() {
         return quarkusVersion;
     }
 
-    public void setQuarkusVersion(QuarkusVersion quarkusVersion) {
+    public void setQuarkusVersion(String quarkusVersion) {
         this.quarkusVersion = quarkusVersion;
     }
 
@@ -114,5 +124,10 @@ public class Repository {
     @Transient
     public void addLog(Log log) {
         this.logs.add(log);
+    }
+
+    @Transient
+    public Optional<QuarkusExtension> getExtensionByName(String extensionName) {
+        return getExtensions().stream().filter(extension -> extension.getName().equals(extensionName)).findFirst();
     }
 }

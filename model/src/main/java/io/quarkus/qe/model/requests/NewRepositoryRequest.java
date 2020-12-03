@@ -9,6 +9,7 @@ public class NewRepositoryRequest {
     private String repoUrl;
     @NotEmpty
     private String branch;
+    private String relativePath;
     private List<String> labels;
 
     public String getRepoUrl() {
@@ -25,6 +26,14 @@ public class NewRepositoryRequest {
 
     public void setBranch(String branch) {
         this.branch = branch;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 
     public List<String> getLabels() {

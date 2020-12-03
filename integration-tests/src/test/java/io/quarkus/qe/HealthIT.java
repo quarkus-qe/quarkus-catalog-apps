@@ -8,17 +8,9 @@ public class HealthIT extends BaseIT {
     private static final String HEALTH_PATH = "/health";
 
     @Test
-    public void storageServiceHealthEndpointShouldBeOk() {
+    public void healthEndpointsShouldBeOk() {
         awaitFor(() -> givenStorageService().get(HEALTH_PATH).then().statusCode(HttpStatus.SC_OK));
-    }
-
-    @Test
-    public void restApiHealthEndpointShouldBeOk() {
         awaitFor(() -> givenRestApiService().get(HEALTH_PATH).then().statusCode(HttpStatus.SC_OK));
-    }
-
-    @Test
-    public void enricherServiceHealthEndpointShouldBeOk() {
         awaitFor(() -> givenEnrichService().get(HEALTH_PATH).then().statusCode(HttpStatus.SC_OK));
     }
 }

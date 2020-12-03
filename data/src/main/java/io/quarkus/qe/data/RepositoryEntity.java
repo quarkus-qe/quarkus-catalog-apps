@@ -19,6 +19,7 @@ public class RepositoryEntity extends PanacheEntity {
     @Column(unique = true, nullable = false)
     public String repoUrl;
     public String branch;
+    public String relativePath;
     @Column(columnDefinition = "TIMESTAMP")
     public LocalDateTime createdAt;
     @Column(columnDefinition = "TIMESTAMP")

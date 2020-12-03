@@ -19,19 +19,16 @@ public class RepositoryMarshaller {
     @Inject
     QuarkusExtensionMarshaller quarkusExtensionMarshaller;
 
-    @Inject
-    QuarkusVersionMarshaller quarkusVersionMarshaller;
-
     public Repository fromEntity(RepositoryEntity entity) {
         Repository model = new Repository();
         model.setId(entity.id);
         model.setRepoUrl(entity.repoUrl);
         model.setBranch(entity.branch);
+        model.setRelativePath(entity.relativePath);
         model.setName(entity.name);
         model.setCreatedAt(formatDate(entity.createdAt));
         model.setUpdatedAt(formatDate(entity.updatedAt));
-        Optional.ofNullable(entity.quarkusVersion)
-                .ifPresent(version -> model.setQuarkusVersion(quarkusVersionMarshaller.fromEntity(version)));
+        Optional.ofNullable(entity.quarkusVersion).ifPresent(version -> model.setQuarkusVersion(version.id));
 
         if (entity.status != null) {
             model.setStatus(entity.status.name());

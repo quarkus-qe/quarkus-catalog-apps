@@ -2,8 +2,8 @@ package io.quarkus.qe.extensions;
 
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
@@ -14,7 +14,7 @@ import io.quarkus.qe.containers.PostgreSqlContainer;
 import io.quarkus.qe.containers.RestApiServiceContainer;
 import io.quarkus.qe.containers.StorageServiceContainer;
 
-public class QuarkusAppsCatalogDeploymentExtension implements BeforeAllCallback, AfterAllCallback {
+public class QuarkusAppsCatalogDeploymentExtension implements BeforeEachCallback, AfterEachCallback {
 
     public static final String DATABASE_ALIAS = "database";
     public static final String KAFKA_ALIAS = "kafka";
@@ -28,7 +28,7 @@ public class QuarkusAppsCatalogDeploymentExtension implements BeforeAllCallback,
 
     @SuppressWarnings({ "resource", "deprecation" })
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) throws Exception {
         network = Network.newNetwork();
         database = new PostgreSqlContainer().withNetwork(network).withNetworkAliases(DATABASE_ALIAS);
 
@@ -50,7 +50,7 @@ public class QuarkusAppsCatalogDeploymentExtension implements BeforeAllCallback,
     }
 
     @Override
-    public void afterAll(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) throws Exception {
         closeSilently(storageService);
         closeSilently(enricherService);
         closeSilently(restApiService);

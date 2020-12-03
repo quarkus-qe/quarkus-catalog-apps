@@ -7,13 +7,14 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import io.quarkus.qe.model.QuarkusVersion;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -29,6 +30,7 @@ public class QuarkusExtensionsEnricher implements Enricher {
 
     private static final String QUARKUS_TAG = "quarkus-";
     private static final String POM_XML = "/pom.xml";
+    private static final String PATH = "/";
 
     @Inject
     Instance<RepoUrlToRawService> repoUrlToRawServices;
@@ -43,7 +45,7 @@ public class QuarkusExtensionsEnricher implements Enricher {
         QuarkusVersionResolver quarkusVersionResolver = new QuarkusVersionResolver();
         String rawUrl = getRawUrlFromRepository(repository);
         repository.setExtensions(findAllDependencies(rawUrl, quarkusVersionResolver));
-        repository.setQuarkusVersion(new QuarkusVersion(quarkusVersionResolver.getOverAllQuarkusVersion(repository)));
+        repository.setQuarkusVersion(quarkusVersionResolver.getOverAllQuarkusVersion(repository));
     }
 
     protected Model parseMavenModel(String baseUrl) throws EnrichmentException {
@@ -57,9 +59,21 @@ public class QuarkusExtensionsEnricher implements Enricher {
 
     private String getRawUrlFromRepository(Repository repository) throws EnrichmentException {
         return repoUrlToRawServices.stream().filter(service -> service.isFor(repository))
-                .map(service -> service.getRawUrl(repository)).findFirst()
-                .orElseThrow(() -> new EnrichmentException("The %s repository is not supported. Can't get the RAW format. ",
-                        repository.getRepoUrl()));
+                .map(service -> service.getRawUrl(repository) + getRelativePath(repository))
+                .findFirst().orElseThrow(throwsRepositoryNotSupported(repository));
+    }
+
+    private String getRelativePath(Repository repository) {
+        if (StringUtils.isEmpty(repository.getRelativePath())) {
+            return StringUtils.EMPTY;
+        }
+
+        String relativePath = repository.getRelativePath();
+        if (!relativePath.startsWith(PATH)) {
+            relativePath = PATH + relativePath;
+        }
+
+        return relativePath;
     }
 
     protected Set<QuarkusExtension> findAllDependencies(String baseUrl, QuarkusVersionResolver quarkusVersionResolver)
@@ -85,6 +99,11 @@ public class QuarkusExtensionsEnricher implements Enricher {
 
     private Predicate<Dependency> onlyQuarkusDependencies() {
         return dependency -> dependency.getArtifactId().startsWith(QUARKUS_TAG);
+    }
+
+    private Supplier<EnrichmentException> throwsRepositoryNotSupported(Repository repository) {
+        return () -> new EnrichmentException("The %s repository is not supported. Can't get the RAW format. ",
+                repository.getRepoUrl());
     }
 
     private QuarkusExtension toQuarkusExtensionModel(Dependency extension, QuarkusVersionResolver quarkusVersionResolver) {

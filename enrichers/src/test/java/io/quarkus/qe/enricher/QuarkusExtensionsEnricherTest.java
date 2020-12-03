@@ -1,15 +1,13 @@
 package io.quarkus.qe.enricher;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-
-import static java.util.Arrays.asList;
-
-import static java.util.Collections.emptyList;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,6 +69,21 @@ public class QuarkusExtensionsEnricherTest {
         thenExpectedExtensionsAre("quarkus-extension1", "quarkus-extension2", "quarkus-extension3");
     }
 
+    @Test
+    public void shouldUseRelativePath() throws EnrichmentException {
+        givenRepositoryIsSupported();
+        givenRepositoryHasRelativePath("/relative-module");
+        givenModelFor(RAW_URL, asList("quarkus-ignored1", "quarkus-ignored2"), asList("ignored-module"));
+        givenModelFor(RAW_URL + "/ignored-module", asList("quarkus-ignored3"), emptyList());
+        givenModelFor(RAW_URL + "/relative-module", asList("quarkus-extension1", "quarkus-extension2"), emptyList());
+        whenEnrichRepository();
+        thenExpectedExtensionsAre("quarkus-extension1", "quarkus-extension2");
+    }
+
+    private void givenRepositoryHasRelativePath(String relativePath) {
+        repository.setRelativePath(relativePath);
+    }
+
     private void givenModelFor(String baseUrl, List<String> extensions, List<String> modules) throws EnrichmentException {
         Model model = new Model();
 
@@ -82,7 +95,7 @@ public class QuarkusExtensionsEnricherTest {
 
         modules.forEach(model::addModule);
 
-        doReturn(model).when(enricher).parseMavenModel(baseUrl);
+        lenient().doReturn(model).when(enricher).parseMavenModel(baseUrl);
     }
 
     private void givenRepositoryIsNotSupported() {

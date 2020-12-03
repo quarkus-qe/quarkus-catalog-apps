@@ -1,13 +1,12 @@
 package io.quarkus.qe.utils;
 
-import io.quarkus.qe.data.QuarkusVersionEntity;
 import java.util.Set;
 
-import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 
 import io.quarkus.qe.data.QuarkusExtensionEntity;
+import io.quarkus.qe.data.QuarkusVersionEntity;
 import io.quarkus.qe.data.RepositoryEntity;
 
 @ApplicationScoped
