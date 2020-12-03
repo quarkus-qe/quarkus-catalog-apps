@@ -4,6 +4,15 @@ on:
     types: [closed]
 name: Milestone Closure
 jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create a release draft for a milestone
+        id: create-release-milestone
+        uses: ecampidoglio/auto-release-milestone@v1
+        with:
+          repo-token: ${{ secrets.TOKEN }}
   create-release-notes:
     runs-on: ubuntu-latest
     steps:
