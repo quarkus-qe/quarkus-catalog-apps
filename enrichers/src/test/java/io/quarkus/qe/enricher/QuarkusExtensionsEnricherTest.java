@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
 
 import static java.util.Collections.emptyList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,7 +57,7 @@ public class QuarkusExtensionsEnricherTest {
     }
 
     @Test
-    public void shouldRaiseEnrichExceptionIfNotSupported() throws EnrichmentException {
+    public void shouldRaiseEnrichExceptionIfNotSupported() {
         givenRepositoryIsNotSupported();
         Assertions.assertThrows(EnrichmentException.class, this::whenEnrichRepository);
     }

@@ -19,6 +19,7 @@ public class Repository {
     private String status;
     private String name;
     private Set<QuarkusExtension> extensions = new HashSet<>();
+    private QuarkusVersion quarkusVersion;
     private Set<String> labels = new HashSet<>();
     private List<Log> logs = new ArrayList<>();
 
@@ -92,6 +93,14 @@ public class Repository {
 
     public void setLogs(List<Log> logs) {
         this.logs = logs;
+    }
+
+    public QuarkusVersion getQuarkusVersion() {
+        return quarkusVersion;
+    }
+
+    public void setQuarkusVersion(QuarkusVersion quarkusVersion) {
+        this.quarkusVersion = quarkusVersion;
     }
 
     public Set<String> getLabels() {

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <project
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.quarkus.qe.catalog-apps</groupId>
@@ -17,24 +17,7 @@
         <module>storage-service</module>
         <module>enrichers</module>
         <module>rest-api</module>
-        <module>integration-tests</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>jboss-maven-central-proxy</id>
-            <name>JBoss Maven Central proxy</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/central/</url>
-        </repository>
-    </repositories>
 
     <properties>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
@@ -43,7 +26,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+        <surefire-plugin.version>2.22.1</surefire-plugin.version>
         <formatter-maven-plugin.version>2.13.0</formatter-maven-plugin.version>
         <testcontainers.version>1.15.0</testcontainers.version>
 
@@ -52,7 +35,7 @@
         <quarkus.platform.version>1.10.0.Final</quarkus.platform.version>
         <quarkus-plugin.version>1.10.0.Final</quarkus-plugin.version>
         <assertj-core.version>3.18.1</assertj-core.version>
-        <quarkus.container-image.group>quarkus-qe</quarkus.container-image.group>
+
     </properties>
 
     <dependencyManagement>
@@ -174,7 +157,6 @@
                 <configuration>
                     <systemProperties>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <quarkus.container-image.group>${quarkus.container-image.group}</quarkus.container-image.group>
                     </systemProperties>
                 </configuration>
             </plugin>
