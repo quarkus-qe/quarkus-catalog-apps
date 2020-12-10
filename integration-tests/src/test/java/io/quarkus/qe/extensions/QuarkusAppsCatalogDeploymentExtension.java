@@ -40,11 +40,11 @@ public class QuarkusAppsCatalogDeploymentExtension implements BeforeEachCallback
 
         enricherService = new EnricherServiceContainer();
         enricherService.withNetwork(network);
-        enricherService.dependsOn(database, kafka);
+        enricherService.dependsOn(storageService);
 
         restApiService = new RestApiServiceContainer();
         restApiService.withNetwork(network);
-        restApiService.dependsOn(database, kafka);
+        restApiService.dependsOn(storageService);
 
         Startables.deepStart(Stream.of(restApiService, enricherService, storageService, database, kafka)).join();
     }
