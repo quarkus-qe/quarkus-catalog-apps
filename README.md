@@ -100,11 +100,11 @@ When running the REST API service, it also runs a GraphQL endpoint at `/graphql-
 
 At the moment, there are five queries:
 
-- repositories:
+- by repository ID:
 
 ```
 {
-   repositories {
+   repositoryById (id: 19) {
     id
     repoUrl
     name
@@ -138,11 +138,11 @@ At the moment, there are five queries:
 
 ```
 
-- by repository URL:
+- repositories:
 
 ```
 {
-   repositoryByUrl (repoUrl: "http://myrepo/path") {
+   repositories {
     id
     repoUrl
     name
@@ -159,11 +159,11 @@ At the moment, there are five queries:
 }
 ```
 
-- by repository ID:
+- by repository URL:
 
 ```
 {
-   repositoryById (id: 19) {
+   repositories (request: { repoUrl: "http://myrepo/path" }) {
     id
     repoUrl
     name

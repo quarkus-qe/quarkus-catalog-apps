@@ -1,9 +1,14 @@
 package io.quarkus.qe.data;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import static io.quarkus.qe.data.query.RepositoryQuery.FILTER_BRANCH;
+import static io.quarkus.qe.data.query.RepositoryQuery.FILTER_RELATIVE_PATH;
+import static io.quarkus.qe.data.query.RepositoryQuery.FILTER_REPO_URL;
+import static io.quarkus.qe.data.query.RepositoryQuery.PARAM;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,10 +18,26 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 @Entity(name = "repository")
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "repoUrl", "branch", "relativePath" }))
+@FilterDef(name = FILTER_BRANCH, parameters = { @ParamDef(name = PARAM, type = "string") })
+@FilterDef(name = FILTER_RELATIVE_PATH, parameters = { @ParamDef(name = PARAM, type = "string") })
+@FilterDef(name = FILTER_REPO_URL, parameters = { @ParamDef(name = PARAM, type = "string") })
+@Filter(name = FILTER_REPO_URL, condition = "repoUrl=:" + PARAM)
+@Filter(name = FILTER_BRANCH, condition = "branch=:" + PARAM)
+@Filter(name = FILTER_RELATIVE_PATH, condition = "relativePath=:" + PARAM)
 public class RepositoryEntity extends PanacheEntity {
-    @Column(unique = true, nullable = false)
+
+    @Column(nullable = false)
     public String repoUrl;
     public String branch;
     public String relativePath;

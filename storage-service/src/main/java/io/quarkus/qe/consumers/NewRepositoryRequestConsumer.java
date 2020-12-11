@@ -35,22 +35,27 @@ public class NewRepositoryRequestConsumer {
 
     @Incoming(Channels.NEW_REPOSITORY)
     @Blocking
-    @Transactional
     public void addRepository(NewRepositoryRequest request) {
         try {
-            RepositoryEntity entity = new RepositoryEntity();
-            entity.repoUrl = request.getRepoUrl();
-            entity.branch = request.getBranch();
-            entity.relativePath = request.getRelativePath();
-            entity.createdAt = LocalDateTime.now();
-            entity.status = RepositoryStatus.PENDING;
-            updateLabels(request, entity);
-            entity.persist();
+            RepositoryEntity entity = saveRepository(request);
             LOG.info("New repository '" + request.getRepoUrl() + "' with ID " + entity.id);
             enrichEmitter.send(repositoryMarshaller.fromEntity(entity));
         } catch (Exception ex) {
             LOG.warn("The request has been discard. ", ex);
         }
+    }
+
+    @Transactional
+    public RepositoryEntity saveRepository(NewRepositoryRequest request) {
+        RepositoryEntity entity = new RepositoryEntity();
+        entity.repoUrl = request.getRepoUrl();
+        entity.branch = request.getBranch();
+        entity.relativePath = request.getRelativePath();
+        entity.createdAt = LocalDateTime.now();
+        entity.status = RepositoryStatus.PENDING;
+        updateLabels(request, entity);
+        entity.persist();
+        return entity;
     }
 
     private void updateLabels(NewRepositoryRequest request, RepositoryEntity entity) {

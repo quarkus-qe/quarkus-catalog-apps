@@ -38,6 +38,7 @@ public class RepositoryResourceTest {
     private static final int EXPECTED_ALL_REPOS_AMOUNT = 3;
     private static final String PATH = "/repository";
     private static final String BRANCH = "master";
+    private static final String NO_RELATIVE_PATH = null;
     private static final String REPO_URL = "http://github.com/user/repo.git";
     private static final String REPO_URL_1 = "http://github.com/user/repo1.git";
     private static final String REPO_URL_2 = "http://github.com/user/repo2.git";
@@ -61,7 +62,9 @@ public class RepositoryResourceTest {
     public void setup() {
         repositoryEntityUtils.deleteAll();
         newRepositoryResponses = connector.sink(Channels.NEW_REPOSITORY);
+        newRepositoryResponses.clear();
         updateRepositoryResponses = connector.sink(Channels.ENRICH_REPOSITORY);
+        updateRepositoryResponses.clear();
     }
 
     @Test
@@ -88,9 +91,35 @@ public class RepositoryResourceTest {
     }
 
     @Test
-    public void shouldReturnConflictIfRepositoryAlreadyExists() {
+    public void shouldAllowAddRepositoriesForDifferentBranch() {
+        givenExistingRepository(REPO_URL, "one-branch");
+        givenNewRepositoryRequest(REPO_URL, "another-branch");
+        whenAddNewRepository();
+        thenResponseIsAccepted();
+    }
+
+    @Test
+    public void shouldAllowAddRepositoriesForRelativePath() {
+        givenExistingRepository(REPO_URL, BRANCH, "/path1");
+        givenNewRepositoryRequest(REPO_URL, BRANCH, "/path2");
+        whenAddNewRepository();
+        thenResponseIsAccepted();
+    }
+
+    @Test
+    public void shouldRaiseConflictIfRepositoryWithNoRelativePathAlreadyExists() {
         givenExistingRepository(REPO_URL);
         givenNewRepositoryRequest(REPO_URL);
+        whenAddNewRepository();
+        thenResponseIsConflict();
+        thenResponseErrorCodeIs(RepositoryAlreadyExistsException.uniqueServiceErrorId);
+        thenResponseErrorMessageIs(EXPECTED_CONFLICT_ERROR_MSG);
+    }
+
+    @Test
+    public void shouldRaiseConflictIfRepositoryWithSameRelativePathAlreadyExists() {
+        givenExistingRepository(REPO_URL, BRANCH, "/path");
+        givenNewRepositoryRequest(REPO_URL, BRANCH, "/path");
         whenAddNewRepository();
         thenResponseIsConflict();
         thenResponseErrorCodeIs(RepositoryAlreadyExistsException.uniqueServiceErrorId);
@@ -131,13 +160,30 @@ public class RepositoryResourceTest {
     }
 
     private void givenExistingRepository(String repoUrl) {
-        entity = repositoryEntityUtils.create(repoUrl, BRANCH);
+        givenExistingRepository(repoUrl, BRANCH);
+    }
+
+    private void givenExistingRepository(String repoUrl, String branch) {
+        givenExistingRepository(repoUrl, branch, NO_RELATIVE_PATH);
+    }
+
+    private void givenExistingRepository(String repoUrl, String branch, String relativePath) {
+        entity = repositoryEntityUtils.create(repoUrl, branch, relativePath);
     }
 
     private void givenNewRepositoryRequest(String repoUrl) {
+        givenNewRepositoryRequest(repoUrl, BRANCH);
+    }
+
+    private void givenNewRepositoryRequest(String repoUrl, String branch) {
+        givenNewRepositoryRequest(repoUrl, branch, NO_RELATIVE_PATH);
+    }
+
+    private void givenNewRepositoryRequest(String repoUrl, String branch, String relativePath) {
         repository = new NewRepositoryRequest();
         repository.setRepoUrl(repoUrl);
-        repository.setBranch(BRANCH);
+        repository.setBranch(branch);
+        repository.setRelativePath(relativePath);
     }
 
     private void whenAddNewRepository() {

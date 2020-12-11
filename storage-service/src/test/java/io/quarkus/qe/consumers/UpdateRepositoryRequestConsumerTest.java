@@ -43,6 +43,8 @@ import io.smallrye.reactive.messaging.connectors.InMemorySource;
 public class UpdateRepositoryRequestConsumerTest {
 
     private static final String REPO_URL = "http://github.com/user/repo.git";
+    private static final String BRANCH = "master";
+    private static final String NO_RELATIVE_PATH = null;
     private static final String NEW_NAME = "The New Repo Name";
 
     @Inject
@@ -66,7 +68,7 @@ public class UpdateRepositoryRequestConsumerTest {
     public void setup() {
         requests = connector.source(Channels.UPDATE_REPOSITORY);
         repositoryEntityUtils.deleteAll();
-        entity = repositoryEntityUtils.create(REPO_URL);
+        entity = repositoryEntityUtils.create(REPO_URL, BRANCH, NO_RELATIVE_PATH);
     }
 
     @Test

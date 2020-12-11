@@ -5,8 +5,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.microprofile.graphql.Description;
+import org.eclipse.microprofile.graphql.GraphQLApi;
+import org.eclipse.microprofile.graphql.Query;
+import org.eclipse.microprofile.graphql.Source;
+
 import io.quarkus.qe.exceptions.RepositoryNotFoundException;
 import io.quarkus.qe.model.Repository;
+import io.quarkus.qe.model.requests.RepositoryQueryRequest;
 import io.quarkus.qe.services.RepositoryService;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
@@ -20,22 +26,16 @@ public class SearchResource {
     @Inject
     RepositoryService repositoryService;
 
-    @Query("repositories")
-    @Description("Get all repositories")
-    public List<Repository> getAllRepositories(@Name("quarkusVersions") @DefaultValue("[]") List<String> versions) {
-        return repositoryService.findAll(versions);
-    }
-
     @Query("repositoryById")
     @Description("Get repository by ID")
     public Repository getRepositoryByRepoUrl(@Name("id") long id) throws RepositoryNotFoundException {
         return repositoryService.findById(id);
     }
 
-    @Query("repositoryByUrl")
-    @Description("Get repository by repository URL")
-    public Repository getRepositoryByRepoUrl(@Name("repoUrl") String repoUrl) throws RepositoryNotFoundException {
-        return repositoryService.findByRepoUrl(repoUrl);
+    @Query("repositories")
+    @Description("Get repositories")
+    public List<Repository> getAllRepositories(@Source RepositoryQueryRequest request) {
+        return repositoryService.find(request);
     }
 
     @Query("repositoriesByExtensions")

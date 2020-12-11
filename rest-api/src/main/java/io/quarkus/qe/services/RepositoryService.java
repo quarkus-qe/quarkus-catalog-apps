@@ -15,10 +15,12 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 import io.quarkus.qe.configuration.Channels;
 import io.quarkus.qe.data.RepositoryEntity;
 import io.quarkus.qe.data.marshallers.RepositoryMarshaller;
+import io.quarkus.qe.data.query.RepositoryQuery;
 import io.quarkus.qe.exceptions.RepositoryAlreadyExistsException;
 import io.quarkus.qe.exceptions.RepositoryNotFoundException;
 import io.quarkus.qe.model.Repository;
 import io.quarkus.qe.model.requests.NewRepositoryRequest;
+import io.quarkus.qe.model.requests.RepositoryQueryRequest;
 
 @ApplicationScoped
 public class RepositoryService {
@@ -74,27 +76,16 @@ public class RepositoryService {
                 .collect(Collectors.toList());
     }
 
-    public Repository findByRepoUrl(String repoUrl) throws RepositoryNotFoundException {
-        RepositoryEntity entity = RepositoryEntity.find("repoUrl", repoUrl).singleResult();
-        if (entity == null) {
-            throw new RepositoryNotFoundException(String.format("Repository with %s not exist.", repoUrl));
+    public List<Repository> find(RepositoryQueryRequest request) {
+        RepositoryQuery query = RepositoryQuery.findAll();
+
+        if (request != null) {
+            query.filterByRepoUrl(request.getRepoUrl());
+            query.filterByBranch(request.getBranch());
+            query.filterByRelativePath(request.getRelativePath());
         }
 
-        return repositoryMarshaller.fromEntity(entity);
-    }
-
-    public List<Repository> findAll(List<String> versions) {
-        StringBuilder sql = new StringBuilder();
-        String quarkusVersionParamName = "quarkusVersion";
-        sql.append("select distinct repo from repository repo\t");
-        Map<String, Object> versionsParam = getQuarkusVersionAsQueryParam(quarkusVersionParamName, versions);
-
-        if (!versionsParam.isEmpty()) {
-            sql.append("where quarkusVersion IN :" + quarkusVersionParamName);
-        }
-
-        return RepositoryEntity.<RepositoryEntity> find(sql.toString(), versionsParam)
-                .stream()
+        return query.stream()
                 .map(repositoryMarshaller::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -108,7 +99,10 @@ public class RepositoryService {
     }
 
     public void sendNewRepositoryRequest(NewRepositoryRequest request) throws RepositoryAlreadyExistsException {
-        if (RepositoryEntity.find("repoUrl", request.getRepoUrl()).count() > 0) {
+        RepositoryQuery query = RepositoryQuery.findByRepoUrl(request.getRepoUrl())
+                .filterByBranch(request.getBranch())
+                .filterByRelativePath(request.getRelativePath());
+        if (query.count() > 0) {
             throw new RepositoryAlreadyExistsException(String.format("Repository %s already exist.", request.getRepoUrl()));
         }
         newRepositoryRequestEmitter.send(request);

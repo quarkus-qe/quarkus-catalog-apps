@@ -33,6 +33,7 @@ public class SearchResourceTest {
     private static final String PATH = "/graphql";
     private static final String REPO_URL = "http://github.com/user/repo.git";
     private static final String BRANCH = "master";
+    private static final String NO_RELATIVE_PATH = null;
 
     @Inject
     RepositoryEntityUtils repositoryEntityUtils;
@@ -81,16 +82,16 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void testRepositoriesByExtensionsArtifactIdQuery() {
-        givenExistingRepositoryWithExtensions("quarkus-a", "quarkus-b");
-        whenRunGraphqlRepositoriesByExtensionsArtifactIdQuery("quarkus-b");
+    public void testRepositoryByUrlQueryAndBranch() {
+        givenExistingRepository();
+        whenRunGraphqlRepositoryByUrlAndBranchQuery();
         thenRepositoryIsFound();
     }
 
     @Test
-    public void testRepositoriesByExtensionsArtifactIdQueryShouldReturnEmpty() {
-        givenExistingRepositoryWithExtensions("quarkus-a", "quarkus-b");
-        whenRunGraphqlRepositoriesByExtensionsArtifactIdQuery("quarkus-not-found");
+    public void testRepositoryByUrlQueryAndBranchIsNotFound() {
+        givenExistingRepository();
+        whenRunGraphqlRepositoryByUrlAndBranchQuery("another-branch");
         thenRepositoryIsNotFound();
     }
 
@@ -109,7 +110,7 @@ public class SearchResourceTest {
     }
 
     private void givenExistingRepository() {
-        entity = repositoryEntityUtils.create(REPO_URL, BRANCH);
+        entity = repositoryEntityUtils.create(REPO_URL, BRANCH, NO_RELATIVE_PATH);
     }
 
     private void givenExistingRepositoryWithExtensions(String... extensions) {
@@ -138,12 +139,23 @@ public class SearchResourceTest {
                 "    id\n" +
                 "  }\n" +
                 "}"));
+    }
 
+    private void whenRunGraphqlRepositoryByUrlAndBranchQuery() {
+        whenRunGraphqlRepositoryByUrlAndBranchQuery(BRANCH);
+    }
+
+    private void whenRunGraphqlRepositoryByUrlAndBranchQuery(String branch) {
+        whenRunGraphqlQuery(getPayload("{\n" +
+                "  repositories (request: { repoUrl: \"" + REPO_URL + "\", branch: \"" + branch + "\" }) {\n" +
+                "    id\n" +
+                "  }\n" +
+                "}"));
     }
 
     private void whenRunGraphqlRepositoryByUrlQuery() {
         whenRunGraphqlQuery(getPayload("{\n" +
-                "  repositoryByUrl (repoUrl: \"" + REPO_URL + "\") {\n" +
+                "  repositories (request: { repoUrl: \"" + REPO_URL + "\" }) {\n" +
                 "    id\n" +
                 "  }\n" +
                 "}"));

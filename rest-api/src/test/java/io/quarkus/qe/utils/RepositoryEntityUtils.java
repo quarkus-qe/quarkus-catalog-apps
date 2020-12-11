@@ -19,10 +19,11 @@ public class RepositoryEntityUtils {
     }
 
     @Transactional
-    public RepositoryEntity create(String repoUrl, String branch) {
+    public RepositoryEntity create(String repoUrl, String branch, String relativePath) {
         RepositoryEntity entity = new RepositoryEntity();
         entity.repoUrl = repoUrl;
         entity.branch = branch;
+        entity.relativePath = relativePath;
         entity.quarkusVersion = createVersionEntity(System.currentTimeMillis() + ".version");
         entity.persist();
 
