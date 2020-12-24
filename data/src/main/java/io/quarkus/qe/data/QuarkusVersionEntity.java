@@ -12,10 +12,14 @@ public class QuarkusVersionEntity extends PanacheEntityBase {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (!(obj instanceof QuarkusVersionEntity))
+        }
+
+        if (!(obj instanceof QuarkusVersionEntity)) {
             return false;
+        }
+
         QuarkusVersionEntity other = (QuarkusVersionEntity) obj;
         return id.equals(other.id);
     }

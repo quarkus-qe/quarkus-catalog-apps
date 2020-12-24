@@ -13,7 +13,7 @@ import io.quarkus.qe.data.RepositoryEntity;
 import io.quarkus.qe.model.QuarkusExtension;
 import io.quarkus.qe.model.requests.RepositoryQueryRequest;
 
-public class RepositoryQuery {
+public final class RepositoryQuery {
 
     public static final String FILTER_BRANCH = "byBranch";
     public static final String FILTER_RELATIVE_PATH = "byRelativePath";
@@ -106,11 +106,11 @@ public class RepositoryQuery {
         return query.count();
     }
 
-    public static final RepositoryQuery findAll() {
+    public static RepositoryQuery findAll() {
         return new RepositoryQuery(RepositoryEntity.<RepositoryEntity> findAll());
     }
 
-    public static final RepositoryQuery findByRepoUrl(String repoUrl) {
+    public static RepositoryQuery findByRepoUrl(String repoUrl) {
         return new RepositoryQuery(RepositoryEntity.find("repoUrl", repoUrl));
     }
 }

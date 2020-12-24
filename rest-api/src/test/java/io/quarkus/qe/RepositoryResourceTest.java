@@ -112,7 +112,7 @@ public class RepositoryResourceTest {
         givenNewRepositoryRequest(REPO_URL);
         whenAddNewRepository();
         thenResponseIsConflict();
-        thenResponseErrorCodeIs(RepositoryAlreadyExistsException.uniqueServiceErrorId);
+        thenResponseErrorCodeIs(RepositoryAlreadyExistsException.UNIQUE_SERVICE_ERROR_ID);
         thenResponseErrorMessageIs(EXPECTED_CONFLICT_ERROR_MSG);
     }
 
@@ -122,7 +122,7 @@ public class RepositoryResourceTest {
         givenNewRepositoryRequest(REPO_URL, BRANCH, "/path");
         whenAddNewRepository();
         thenResponseIsConflict();
-        thenResponseErrorCodeIs(RepositoryAlreadyExistsException.uniqueServiceErrorId);
+        thenResponseErrorCodeIs(RepositoryAlreadyExistsException.UNIQUE_SERVICE_ERROR_ID);
         thenResponseErrorMessageIs(EXPECTED_CONFLICT_ERROR_MSG);
     }
 
@@ -130,7 +130,7 @@ public class RepositoryResourceTest {
     public void shouldReturnRepositoryNotFound() throws RepositoryNotFoundException {
         whenUpdateRepository();
         thenResponseIsNotFound();
-        thenResponseErrorCodeIs(RepositoryNotFoundException.uniqueServiceErrorId);
+        thenResponseErrorCodeIs(RepositoryNotFoundException.UNIQUE_SERVICE_ERROR_ID);
         thenResponseErrorMessageIs(EXPECTED_NOT_FOUND_ERROR_MSG);
     }
 
@@ -155,7 +155,7 @@ public class RepositoryResourceTest {
     public void shouldReturnNotFoundWhenEntityDoesNotExist() {
         whenGetRepository();
         thenResponseIsNotFound();
-        thenResponseErrorCodeIs(RepositoryNotFoundException.uniqueServiceErrorId);
+        thenResponseErrorCodeIs(RepositoryNotFoundException.UNIQUE_SERVICE_ERROR_ID);
         thenResponseErrorMessageIs(EXPECTED_NOT_FOUND_ERROR_MSG);
     }
 

@@ -12,7 +12,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 
-public class MavenContext {
+public final class MavenContext {
 
     private final List<String> modules = new LinkedList<>();
     private final Map<String, String> properties = new HashMap<>();
