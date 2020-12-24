@@ -20,7 +20,7 @@ public abstract class BaseContext {
     }
 
     /**
-     * It can be a version 1.2.3.Final, or a property ${my.property}
+     * It can be a version 1.2.3.Final, or a property ${my.property}.
      */
     protected String getOrLookupProperty(String value) {
         if (StringUtils.isNotEmpty(value) && value.startsWith(PROPERTY_OPEN)) {

@@ -27,10 +27,14 @@ public class QuarkusExtensionEntity extends PanacheEntity {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (!(obj instanceof QuarkusExtensionEntity))
+        }
+
+        if (!(obj instanceof QuarkusExtensionEntity)) {
             return false;
+        }
+
         QuarkusExtensionEntity other = (QuarkusExtensionEntity) obj;
         return name.equals(other.name) && Objects.equals(other.version, version);
     }

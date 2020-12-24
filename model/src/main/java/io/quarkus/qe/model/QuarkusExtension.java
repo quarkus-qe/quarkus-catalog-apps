@@ -29,10 +29,14 @@ public class QuarkusExtension {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (!(obj instanceof QuarkusExtension))
+        }
+
+        if (!(obj instanceof QuarkusExtension)) {
             return false;
+        }
+
         QuarkusExtension other = (QuarkusExtension) obj;
         return name.equals(other.name) && Objects.equals(other.version, version);
     }
