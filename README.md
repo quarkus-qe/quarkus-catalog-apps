@@ -100,65 +100,6 @@ When running the REST API service, it also runs a GraphQL endpoint at `/graphql-
 
 At the moment, there are five queries:
 
-- repositories:
-
-```
-{
-   repositories {
-    id
-    repoUrl
-    name
-    quarkusVersion
-    branch
-    extensions {
-      name
-      version
-    }
-    labels
-    createdAt
-    updatedAt
-    status
-   }
-}
-
-// It's also possible filter by quarkus version:
-{
- repositories(quarkusVersions:["999-SNAPSHOT", "1.10.2.Final"]) {
-    id
-    repoUrl
-    name
-    quarkusVersion
-    branch
-    labels
-    createdAt
-    updatedAt
-    status
- }
-}
-
-```
-
-- by repository URL:
-
-```
-{
-   repositoryByUrl (repoUrl: "http://myrepo/path") {
-    id
-    repoUrl
-    name
-    branch
-    extensions {
-      name
-      version
-    }
-    labels
-    createdAt
-    updatedAt
-    status
-   }
-}
-```
-
 - by repository ID:
 
 ```
@@ -167,6 +108,7 @@ At the moment, there are five queries:
     id
     repoUrl
     name
+    quarkusVersion
     branch
     extensions {
       name
@@ -180,39 +122,126 @@ At the moment, there are five queries:
 }
 ```
 
-- repositories that use any of a list of extensions:
+- repositories:
 
 ```
 {
-  repositoriesByExtensions(extensions: [{name: "quarkus-grpc", version: "1.10.2.Final"}]) {
-    id
-    repoUrl
-    name
-    quarkusVersion
-    branch
-    labels
-    createdAt
-    updatedAt
-    status
-  }
+   repositories {
+      totalCount
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	      quarkusVersion
+	  }
+   }
 }
 ```
 
-- repositories that use any of a list of artifactIds:
+Using the same query, we can filter by repository URL, labels, extensions, versions, ... Let's see a few examples:
+
+- by repository URL:
 
 ```
 {
-  repositoriesByExtensionsArtifactIds(artifactIds: ["quarkus-grpc", "quarkus-jdbc-h2"]) {
-    id
-    repoUrl
-    name
-    quarkusVersion
-    branch
-    labels
-    createdAt
-    updatedAt
-    status
-  }
+   repositories (request: { repoUrl: "http://myrepo/path" }) {
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	      quarkusVersion
+	  }
+   }
+}
+```
+
+- by quarkus version:
+
+```
+{
+   repositories (request: { quarkusVersion: "1.10" }) {
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	      quarkusVersion
+	  }
+   }
+}
+```
+
+- repositories that use extensions:
+
+```
+{
+   repositories (request: { extensions: [ name: "quarkus-grpc" ] } }) {
+      totalCount
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	  }
+   }
+}
+```
+
+- repositories that use extensions and a version (starting at predicate):
+
+```
+{
+   repositories (request: { extensions: [ name: "quarkus-grpc", version: "1.10" ] } }) {
+      totalCount
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	  }
+   }
 }
 ```
 

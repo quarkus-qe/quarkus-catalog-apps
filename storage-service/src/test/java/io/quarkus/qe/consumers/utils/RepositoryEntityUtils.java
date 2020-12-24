@@ -1,6 +1,5 @@
 package io.quarkus.qe.consumers.utils;
 
-import io.quarkus.qe.data.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +7,12 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+
+import io.quarkus.qe.data.LabelEntity;
+import io.quarkus.qe.data.LogEntity;
+import io.quarkus.qe.data.QuarkusExtensionEntity;
+import io.quarkus.qe.data.QuarkusVersionEntity;
+import io.quarkus.qe.data.RepositoryEntity;
 
 @ApplicationScoped
 public class RepositoryEntityUtils {
@@ -21,10 +26,11 @@ public class RepositoryEntityUtils {
     }
 
     @Transactional
-    public RepositoryEntity create(String repoUrl) {
-
+    public RepositoryEntity create(String repoUrl, String branch, String relativePath) {
         RepositoryEntity entity = new RepositoryEntity();
         entity.repoUrl = repoUrl;
+        entity.branch = branch;
+        entity.relativePath = relativePath;
         entity.quarkusVersion = createVersionEntity(System.currentTimeMillis() + ".version");
         entity.persist();
 
@@ -42,7 +48,7 @@ public class RepositoryEntityUtils {
 
     @Transactional
     public RepositoryEntity findById(Long id) {
-        return RepositoryEntity.<RepositoryEntity> findById(id);
+        return RepositoryEntity.findById(id);
     }
 
     @Transactional

@@ -26,7 +26,6 @@ import io.quarkus.qe.consumers.utils.InMemoryKafkaResource;
 import io.quarkus.qe.consumers.utils.RepositoryEntityUtils;
 import io.quarkus.qe.data.RepositoryEntity;
 import io.quarkus.qe.data.RepositoryStatus;
-import io.quarkus.qe.data.marshallers.LogMarshaller;
 import io.quarkus.qe.data.marshallers.RepositoryMarshaller;
 import io.quarkus.qe.model.Log;
 import io.quarkus.qe.model.QuarkusExtension;
@@ -43,6 +42,8 @@ import io.smallrye.reactive.messaging.connectors.InMemorySource;
 public class UpdateRepositoryRequestConsumerTest {
 
     private static final String REPO_URL = "http://github.com/user/repo.git";
+    private static final String BRANCH = "master";
+    private static final String NO_RELATIVE_PATH = null;
     private static final String NEW_NAME = "The New Repo Name";
 
     @Inject
@@ -55,9 +56,6 @@ public class UpdateRepositoryRequestConsumerTest {
     @Inject
     RepositoryMarshaller repositoryMarshaller;
 
-    @Inject
-    LogMarshaller logMarshaller;
-
     private RepositoryEntity entity;
     private Repository repository;
     private InMemorySource<Repository> requests;
@@ -66,7 +64,7 @@ public class UpdateRepositoryRequestConsumerTest {
     public void setup() {
         requests = connector.source(Channels.UPDATE_REPOSITORY);
         repositoryEntityUtils.deleteAll();
-        entity = repositoryEntityUtils.create(REPO_URL);
+        entity = repositoryEntityUtils.create(REPO_URL, BRANCH, NO_RELATIVE_PATH);
     }
 
     @Test

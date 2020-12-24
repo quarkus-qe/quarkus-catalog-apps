@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 
+import io.quarkus.qe.data.LabelEntity;
 import io.quarkus.qe.data.QuarkusExtensionEntity;
 import io.quarkus.qe.data.QuarkusVersionEntity;
 import io.quarkus.qe.data.RepositoryEntity;
@@ -14,28 +15,37 @@ public class RepositoryEntityUtils {
 
     @Transactional
     public void deleteAll() {
+        LabelEntity.deleteAll();
         QuarkusExtensionEntity.deleteAll();
         RepositoryEntity.deleteAll();
     }
 
     @Transactional
-    public RepositoryEntity create(String repoUrl, String branch) {
+    public RepositoryEntity create(String repoUrl, String branch, String relativePath) {
         RepositoryEntity entity = new RepositoryEntity();
         entity.repoUrl = repoUrl;
         entity.branch = branch;
-        entity.quarkusVersion = createVersionEntity(System.currentTimeMillis() + ".version");
+        entity.relativePath = relativePath;
         entity.persist();
 
         return entity;
     }
 
     @Transactional
-    public QuarkusVersionEntity createVersionEntity(String version) {
-        QuarkusVersionEntity versionEntity = new QuarkusVersionEntity();
-        versionEntity.id = version;
-        versionEntity.persist();
+    public RepositoryEntity updateVersion(Long id, String version) {
+        RepositoryEntity entity = RepositoryEntity.findById(id);
+        QuarkusVersionEntity versionEntity = QuarkusVersionEntity.findById(version);
+        if (versionEntity == null) {
+            versionEntity = new QuarkusVersionEntity();
+            versionEntity.id = version;
+            versionEntity.persist();
+        }
 
-        return versionEntity;
+        entity.quarkusVersion = versionEntity;
+
+        entity.persist();
+
+        return entity;
     }
 
     @Transactional
@@ -58,7 +68,20 @@ public class RepositoryEntityUtils {
     }
 
     @Transactional
-    public RepositoryEntity findById(Long id) {
-        return RepositoryEntity.<RepositoryEntity> findById(id);
+    public RepositoryEntity updateLabels(Long id, Set<String> labels) {
+        RepositoryEntity entity = RepositoryEntity.findById(id);
+        entity.labels.clear();
+
+        for (String label : labels) {
+            LabelEntity labelEntity = new LabelEntity();
+            labelEntity.repository = entity;
+            labelEntity.name = label;
+
+            entity.labels.add(labelEntity);
+        }
+
+        entity.persist();
+
+        return entity;
     }
 }

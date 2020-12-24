@@ -1,5 +1,10 @@
 package io.quarkus.qe.model;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class QuarkusExtension {
@@ -29,16 +34,16 @@ public class QuarkusExtension {
         if (!(obj instanceof QuarkusExtension))
             return false;
         QuarkusExtension other = (QuarkusExtension) obj;
-        return StringUtils.equals(name, other.name) && StringUtils.equals(version, other.version);
+        return name.equals(other.name) && Objects.equals(other.version, version);
     }
 
     @Override
-    public final int hashCode() {
-        return toString().hashCode();
+    public int hashCode() {
+        return Objects.hash(name, version);
     }
 
     @Override
     public String toString() {
-        return String.format("%s:%s", name, version);
+        return name + Optional.ofNullable(version).filter(StringUtils::isNotEmpty).map(v -> ":" + v).orElse(EMPTY);
     }
 }
