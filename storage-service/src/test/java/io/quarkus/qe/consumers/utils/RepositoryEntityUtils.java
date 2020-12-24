@@ -48,7 +48,7 @@ public class RepositoryEntityUtils {
 
     @Transactional
     public RepositoryEntity findById(Long id) {
-        return RepositoryEntity.<RepositoryEntity> findById(id);
+        return RepositoryEntity.findById(id);
     }
 
     @Transactional

@@ -120,22 +120,6 @@ At the moment, there are five queries:
     status
    }
 }
-
-// It's also possible filter by quarkus version:
-{
- repositories(quarkusVersions:["999-SNAPSHOT", "1.10.2.Final"]) {
-    id
-    repoUrl
-    name
-    quarkusVersion
-    branch
-    labels
-    createdAt
-    updatedAt
-    status
- }
-}
-
 ```
 
 - repositories:
@@ -143,76 +127,121 @@ At the moment, there are five queries:
 ```
 {
    repositories {
-    id
-    repoUrl
-    name
-    branch
-    extensions {
-      name
-      version
-    }
-    labels
-    createdAt
-    updatedAt
-    status
+      totalCount
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	      quarkusVersion
+	  }
    }
 }
 ```
+
+Using the same query, we can filter by repository URL, labels, extensions, versions, ... Let's see a few examples:
 
 - by repository URL:
 
 ```
 {
    repositories (request: { repoUrl: "http://myrepo/path" }) {
-    id
-    repoUrl
-    name
-    branch
-    extensions {
-      name
-      version
-    }
-    labels
-    createdAt
-    updatedAt
-    status
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	      quarkusVersion
+	  }
    }
 }
 ```
 
-- repositories that use any of a list of extensions:
+- by quarkus version:
 
 ```
 {
-  repositoriesByExtensions(extensions: [{name: "quarkus-grpc", version: "1.10.2.Final"}]) {
-    id
-    repoUrl
-    name
-    quarkusVersion
-    branch
-    labels
-    createdAt
-    updatedAt
-    status
-  }
+   repositories (request: { quarkusVersion: "1.10" }) {
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	      quarkusVersion
+	  }
+   }
 }
 ```
 
-- repositories that use any of a list of artifactIds:
+- repositories that use extensions:
 
 ```
 {
-  repositoriesByExtensionsArtifactIds(artifactIds: ["quarkus-grpc", "quarkus-jdbc-h2"]) {
-    id
-    repoUrl
-    name
-    quarkusVersion
-    branch
-    labels
-    createdAt
-    updatedAt
-    status
-  }
+   repositories (request: { extensions: [ name: "quarkus-grpc" ] } }) {
+      totalCount
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	  }
+   }
+}
+```
+
+- repositories that use extensions and a version (starting at predicate):
+
+```
+{
+   repositories (request: { extensions: [ name: "quarkus-grpc", version: "1.10" ] } }) {
+      totalCount
+      list {
+	      id
+	      repoUrl
+	      name
+	      branch
+	      extensions {
+	         name
+	         version
+	      }
+	      labels
+	      createdAt
+	      updatedAt
+	      status
+	  }
+   }
 }
 ```
 

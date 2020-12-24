@@ -26,7 +26,6 @@ import io.quarkus.qe.consumers.utils.InMemoryKafkaResource;
 import io.quarkus.qe.consumers.utils.RepositoryEntityUtils;
 import io.quarkus.qe.data.RepositoryEntity;
 import io.quarkus.qe.data.RepositoryStatus;
-import io.quarkus.qe.data.marshallers.LogMarshaller;
 import io.quarkus.qe.data.marshallers.RepositoryMarshaller;
 import io.quarkus.qe.model.Log;
 import io.quarkus.qe.model.QuarkusExtension;
@@ -56,9 +55,6 @@ public class UpdateRepositoryRequestConsumerTest {
 
     @Inject
     RepositoryMarshaller repositoryMarshaller;
-
-    @Inject
-    LogMarshaller logMarshaller;
 
     private RepositoryEntity entity;
     private Repository repository;

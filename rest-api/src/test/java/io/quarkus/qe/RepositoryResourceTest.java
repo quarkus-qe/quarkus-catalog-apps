@@ -76,7 +76,7 @@ public class RepositoryResourceTest {
     }
 
     @Test
-    public void shouldUpdateRepository() throws RepositoryNotFoundException {
+    public void shouldUpdateRepository() {
         givenExistingRepository(REPO_URL);
         whenUpdateRepository();
         thenResponseIsAccepted();
@@ -191,7 +191,7 @@ public class RepositoryResourceTest {
                 .body(repository).when().post(PATH);
     }
 
-    private void whenUpdateRepository() throws RepositoryNotFoundException {
+    private void whenUpdateRepository() {
         long entityId = Optional.ofNullable(entity).map(e -> e.id).orElse(NOT_FOUND_ENTITY_ID);
         response = given().contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).and()
                 .when().put(PATH + "/" + entityId);

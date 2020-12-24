@@ -4,8 +4,8 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -49,21 +49,21 @@ public class SearchResourceTest {
     @Test
     public void testRepositoriesQuery() {
         givenExistingRepository();
-        whenRunGraphqlRepositoriesQuery();
+        whenRunGraphqlRepositories();
         thenRepositoryIsFound();
     }
 
     @Test
     public void testRepositoriesQueryFilterByQuarkusVersion() {
-        givenExistingRepository();
-        whenRunGraphqlRepositoriesQuery();
+        givenExistingRepositoryWithVersion("1.7.1");
+        whenRunGraphqlRepositoriesByVersionQuery("1.7.1");
         thenRepositoryIsFound();
     }
 
     @Test
     public void testRepositoriesQueryShouldReturnEmpty() {
-        givenExistingRepository();
-        whenRunGraphqlRepositoriesQuery("version-not-found");
+        givenExistingRepositoryWithVersion("1.7.1");
+        whenRunGraphqlRepositoriesByVersionQuery("version-not-found");
         thenRepositoryIsNotFound();
     }
 
@@ -77,35 +77,49 @@ public class SearchResourceTest {
     @Test
     public void testRepositoryByUrlQuery() {
         givenExistingRepository();
-        whenRunGraphqlRepositoryByUrlQuery();
+        whenRunGraphqlRepositoriesByUrlQuery();
         thenRepositoryIsFound();
     }
 
     @Test
     public void testRepositoryByUrlQueryAndBranch() {
         givenExistingRepository();
-        whenRunGraphqlRepositoryByUrlAndBranchQuery();
+        whenRunGraphqlRepositoriesByUrlAndBranchQuery();
         thenRepositoryIsFound();
     }
 
     @Test
     public void testRepositoryByUrlQueryAndBranchIsNotFound() {
         givenExistingRepository();
-        whenRunGraphqlRepositoryByUrlAndBranchQuery("another-branch");
+        whenRunGraphqlRepositoriesByUrlAndBranchQuery("another-branch");
         thenRepositoryIsNotFound();
     }
 
     @Test
     public void testRepositoriesByExtensionsQuery() {
         givenExistingRepositoryWithExtensions("quarkus-a", "quarkus-b");
-        whenRunGraphqlRepositoriesByExtensionsQuery("quarkus-b");
+        whenRunGraphqlRepositoriesByExtensionQuery("quarkus-b");
         thenRepositoryIsFound();
     }
 
     @Test
     public void testRepositoriesByExtensionsQueryShouldReturnEmpty() {
         givenExistingRepositoryWithExtensions("quarkus-a", "quarkus-b");
-        whenRunGraphqlRepositoriesByExtensionsQuery("quarkus-not-found");
+        whenRunGraphqlRepositoriesByExtensionQuery("quarkus-not-found");
+        thenRepositoryIsNotFound();
+    }
+
+    @Test
+    public void testRepositoriesByLabelsQuery() {
+        givenExistingRepositoryWithLabels("label-a", "label-b");
+        whenRunGraphqlRepositoriesByLabelsQuery("label-b");
+        thenRepositoryIsFound();
+    }
+
+    @Test
+    public void testRepositoriesByLabelsQueryShouldReturnEmpty() {
+        givenExistingRepositoryWithLabels("label-a", "label-b");
+        whenRunGraphqlRepositoriesByLabelsQuery("not-found");
         thenRepositoryIsNotFound();
     }
 
@@ -118,73 +132,63 @@ public class SearchResourceTest {
         repositoryEntityUtils.updateExtensions(entity.id, Sets.newHashSet(extensions));
     }
 
-    private void whenRunGraphqlRepositoriesByExtensionsQuery(String... list) {
-        String extensions = Arrays.asList(list).stream()
-                .map(item -> "{name:\"" + item + "\", version: \"" + entity.quarkusVersion.id + "\"}")
-                .collect(Collectors.joining(","));
-
-        whenRunGraphqlQuery(getPayload("{\n" +
-                "  repositoriesByExtensions (extensions: [" + extensions + "]) {\n" +
-                "    id\n" +
-                "  }\n" +
-                "}"));
-
+    private void givenExistingRepositoryWithLabels(String... labels) {
+        givenExistingRepository();
+        repositoryEntityUtils.updateLabels(entity.id, Sets.newHashSet(labels));
     }
 
-    private void whenRunGraphqlRepositoriesByExtensionsArtifactIdQuery(String... list) {
-        String extensions = Arrays.asList(list).stream().map(item -> "\"" + item + "\"").collect(Collectors.joining(","));
-
-        whenRunGraphqlQuery(getPayload("{\n" +
-                "  repositoriesByExtensionsArtifactIds (artifactIds: [" + extensions + "]) {\n" +
-                "    id\n" +
-                "  }\n" +
-                "}"));
+    private void givenExistingRepositoryWithVersion(String version) {
+        givenExistingRepository();
+        repositoryEntityUtils.updateVersion(entity.id, version);
     }
 
-    private void whenRunGraphqlRepositoryByUrlAndBranchQuery() {
-        whenRunGraphqlRepositoryByUrlAndBranchQuery(BRANCH);
+    private void whenRunGraphqlRepositoriesByExtensionQuery(String name) {
+        whenRunGraphqlRepositories("{ extensions: [{ name: \"" + name + "\"}]}");
     }
 
-    private void whenRunGraphqlRepositoryByUrlAndBranchQuery(String branch) {
-        whenRunGraphqlQuery(getPayload("{\n" +
-                "  repositories (request: { repoUrl: \"" + REPO_URL + "\", branch: \"" + branch + "\" }) {\n" +
-                "    id\n" +
-                "  }\n" +
-                "}"));
+    private void whenRunGraphqlRepositoriesByLabelsQuery(String... labels) {
+        whenRunGraphqlRepositories(
+                "{ labels: [" + Stream.of(labels).map(l -> "\"" + l + "\"").collect(Collectors.joining(",")) + "]}");
     }
 
-    private void whenRunGraphqlRepositoryByUrlQuery() {
+    private void whenRunGraphqlRepositoriesByUrlAndBranchQuery() {
+        whenRunGraphqlRepositoriesByUrlAndBranchQuery(BRANCH);
+    }
+
+    private void whenRunGraphqlRepositoriesByUrlAndBranchQuery(String branch) {
+        whenRunGraphqlRepositories("{ repoUrl: \"" + REPO_URL + "\", branch: \"" + branch + "\" }");
+    }
+
+    private void whenRunGraphqlRepositoriesByUrlQuery() {
+        whenRunGraphqlRepositories("{ repoUrl: \"" + REPO_URL + "\" }");
+    }
+
+    private void whenRunGraphqlRepositoriesByVersionQuery(String quarkusVersion) {
+        whenRunGraphqlRepositories("{ quarkusVersion: \"" + quarkusVersion + "\" }");
+    }
+
+    private void whenRunGraphqlRepositories() {
+        whenRunGraphqlRepositories(null);
+    }
+
+    private void whenRunGraphqlRepositories(String filter) {
+        String filterStr = "";
+        if (filter != null) {
+            filterStr = String.format("(request: %s)", filter);
+        }
+
         whenRunGraphqlQuery(getPayload("{\n" +
-                "  repositories (request: { repoUrl: \"" + REPO_URL + "\" }) {\n" +
-                "    id\n" +
+                "  repositories " + filterStr + " {\n" +
+                "    list {" +
+                "       id\n" +
+                "    }\n" +
                 "  }\n" +
                 "}"));
-
     }
 
     private void whenRunGraphqlRepositoryByIdQuery() {
         whenRunGraphqlQuery(getPayload("{\n" +
                 "  repositoryById (id: " + entity.id + ") {\n" +
-                "    id\n" +
-                "  }\n" +
-                "}"));
-
-    }
-
-    private void whenRunGraphqlRepositoriesQuery() {
-        whenRunGraphqlRepositoriesQuery(entity.quarkusVersion.id);
-    }
-
-    private void whenRunGraphqlRepositoriesQuery(String... quarkusVersion) {
-        String versions = Arrays.asList(quarkusVersion).stream().map(item -> "\"" + item + "\"")
-                .collect(Collectors.joining(","));
-        String filter = "";
-        if (!versions.isEmpty()) {
-            filter = "(quarkusVersions:[" + versions + "])";
-        }
-
-        whenRunGraphqlQuery(getPayload("{\n" +
-                "  repositories " + filter + " {\n" +
                 "    id\n" +
                 "  }\n" +
                 "}"));

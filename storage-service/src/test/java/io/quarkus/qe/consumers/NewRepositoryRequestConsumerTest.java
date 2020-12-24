@@ -4,7 +4,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -113,7 +113,7 @@ public class NewRepositoryRequestConsumerTest {
         repository.setRepoUrl(REPO_URL);
         repository.setBranch(branch);
         repository.setRelativePath(relativePath);
-        repository.setLabels(Arrays.asList(LABEL));
+        repository.setLabels(Collections.singletonList(LABEL));
     }
 
     private void whenSendNewRequest() {
