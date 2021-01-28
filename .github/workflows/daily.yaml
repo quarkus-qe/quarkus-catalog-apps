@@ -19,7 +19,7 @@ jobs:
           java-version: '11'
       - name: Build
         run: |
-          mvn -V -B -fae clean verify
+          mvn -V -B -s .github/mvn-settings.xml -fae clean verify
       - name: Zip Artifacts
         run: |
           zip -R artifacts.zip '*-reports/*'
